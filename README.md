@@ -239,6 +239,12 @@ We welcome contributions! Please read [`CONTRIBUTING.md`](./CONTRIBUTING.md) bef
         <sub>Backend & DevOps</sub>
       </a>
     </td>
+    <td align="center">
+      <a href="https://github.com/Nishant2817">
+        <b>Nishant Pandey</b><br/>
+        <sub>Full-Stack Development</sub>
+      </a>
+    </td>
   </tr>
 </table>
 
