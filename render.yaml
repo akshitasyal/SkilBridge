@@ -1,6 +1,6 @@
 services:
-- type: web
-    name: skillbridge-app
-    env: node
-    buildCommand: npm install && npm run build
-    
+  - type: web
+      name: skillbridge-app
+          env: node
+              buildCommand: npm install && npm run build
+              
