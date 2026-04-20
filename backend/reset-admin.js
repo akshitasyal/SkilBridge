@@ -1,36 +1,36 @@
 import bcrypt from "bcryptjs";
 import prisma from "./config/db.js";
 
-async function resetAdminPassword() {
+async function setupAdmin() {
   try {
+    const adminEmail = "akshitasyal09@gmail.com"; // User's email from earlier
     const newPassword = "adminpassword123";
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-    const admins = await prisma.user.findMany({
-      where: { role: "admin" },
+    // Upsert will create the admin if they don't exist, or update them if they do
+    const admin = await prisma.user.upsert({
+      where: { email: adminEmail },
+      update: {
+        password: hashedPassword,
+        role: "admin", // Ensure role is set correctly just in case they signed up as a normal user
+      },
+      create: {
+        username: "Admin",
+        email: adminEmail,
+        password: hashedPassword,
+        role: "admin",
+        isSeller: false,
+      },
     });
 
-    if (admins.length === 0) {
-      console.log("❌ No admin users found in the database. Are you sure you have created one?");
-      return;
-    }
-
-    // Update all admin accounts
-    for (const admin of admins) {
-      await prisma.user.update({
-        where: { id: admin.id },
-        data: { password: hashedPassword },
-      });
-      console.log(`✅ Password successfully reset for Admin: ${admin.email}`);
-    }
-
-    console.log(`🔑 Your new admin password is: ${newPassword}`);
+    console.log(`✅ Admin account ensured for: ${admin.email}`);
+    console.log(`🔑 Your admin password is: ${newPassword}`);
   } catch (error) {
-    console.error("❌ Error resetting admin password:", error);
+    console.error("❌ Error setting up admin:", error);
   } finally {
     await prisma.$disconnect();
   }
 }
 
-resetAdminPassword();
+setupAdmin();
