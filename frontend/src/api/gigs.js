@@ -57,3 +57,17 @@ export async function deleteGig(id, token) {
     throw new Error(error.response?.data?.error || "Failed to delete gig");
   }
 }
+
+/**
+ * PUT /api/gigs/:id  — requires JWT (owner only)
+ */
+export async function updateGig(id, gigData, token) {
+  try {
+    const { data } = await api.put(`/${id}`, gigData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error.response?.data?.error || "Failed to update gig");
+  }
+}

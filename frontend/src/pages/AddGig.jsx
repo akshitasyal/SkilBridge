@@ -106,6 +106,10 @@ export default function AddGig() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.image) {
+      setError("Please upload a gig cover image.");
+      return;
+    }
     setLoading(true);
     setError("");
 
@@ -321,7 +325,7 @@ export default function AddGig() {
 
             {/* Row 4: Image Upload */}
             <div>
-              <label style={labelStyle}>Gig Image Cover</label>
+              <label style={labelStyle}>Gig Image Cover *</label>
               
               <input
                 ref={fileInputRef}

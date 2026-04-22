@@ -27,6 +27,11 @@ export default function GigDetail() {
 
   const [activeTab, setActiveTab] = useState("Basic");
 
+  // Detect if the viewer is the gig owner (evaluated after gig state loads)
+  const isOwner = isAuthenticated && !!user && !!gig && (
+    user.id === gig.userId || user.id === gig.user?.id
+  );
+
   useEffect(() => {
     (async () => {
       try {
@@ -206,36 +211,47 @@ export default function GigDetail() {
                   ))}
                 </div>
 
-                {/* Continue CTA */}
-                <button
-                  onClick={() => {
-                    if (!isAuthenticated) { openAuthModal("login"); return; }
-                    navigate(`/checkout/${gig.id}`);
-                  }}
-                  className="w-full bg-[#1dbf73] hover:bg-[#19a463] text-white font-bold py-3.5 rounded text-[15px] flex items-center justify-center gap-2 transition-colors focus:ring-4 ring-[#1dbf73]/20 outline-none"
-                >
-                  Continue <span>→</span>
-                </button>
+                {/* CTA — Edit for owner, Continue for buyer */}
+                {isOwner ? (
+                  <button
+                    onClick={() => navigate(`/edit-gig/${gig.id}`)}
+                    className="w-full bg-[#222325] hover:bg-black text-white font-bold py-3.5 rounded text-[15px] flex items-center justify-center gap-2 transition-colors focus:ring-4 ring-gray-400/20 outline-none"
+                  >
+                    ✏️ Edit Gig
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      if (!isAuthenticated) { openAuthModal("login"); return; }
+                      navigate(`/checkout/${gig.id}`);
+                    }}
+                    className="w-full bg-[#1dbf73] hover:bg-[#19a463] text-white font-bold py-3.5 rounded text-[15px] flex items-center justify-center gap-2 transition-colors focus:ring-4 ring-[#1dbf73]/20 outline-none"
+                  >
+                    Continue <span>→</span>
+                  </button>
+                )}
               </div>
             </div>
 
-            {/* Contact Seller CTA below the card */}
-            <div className="mt-4">
-              <button 
-                onClick={async () => {
-                  if (!isAuthenticated) { openAuthModal("login"); return; }
-                  try {
-                    const conv = await createConversation(gig.user?.id, token);
-                    navigate(`/messages?c=${conv.id}`);
-                  } catch (err) {
-                     console.error("Failed to start chat", err);
-                  }
-                }}
-                className="w-full bg-white border border-[#222325] hover:bg-[#222325] hover:text-white text-[#222325] font-bold py-3.5 rounded text-[15px] transition-colors"
-               >
-                Contact me
-              </button>
-            </div>
+            {/* Contact Seller CTA — hidden for own gig */}
+            {!isOwner && (
+              <div className="mt-4">
+                <button 
+                  onClick={async () => {
+                    if (!isAuthenticated) { openAuthModal("login"); return; }
+                    try {
+                      const conv = await createConversation(gig.user?.id, token);
+                      navigate(`/messages?c=${conv.id}`);
+                    } catch (err) {
+                       console.error("Failed to start chat", err);
+                    }
+                  }}
+                  className="w-full bg-white border border-[#222325] hover:bg-[#222325] hover:text-white text-[#222325] font-bold py-3.5 rounded text-[15px] transition-colors"
+                 >
+                  Contact me
+                </button>
+              </div>
+            )}
 
           </div>
 

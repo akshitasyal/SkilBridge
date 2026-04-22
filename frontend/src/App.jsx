@@ -16,6 +16,7 @@ import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import MyGigs from "./pages/MyGigs";
+import EditGig from "./pages/EditGig";
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
             <Route path="/my-gigs" element={<ProtectedRoute><MyGigs /></ProtectedRoute>} />
+            <Route path="/edit-gig/:id" element={<ProtectedRoute><EditGig /></ProtectedRoute>} />
             <Route path="/analytics" element={<ProtectedRoute><PlaceholderPage title="Analytics" /></ProtectedRoute>} />
           </Routes>
         </main>

@@ -90,3 +90,34 @@ export const deleteGig = async (req, res) => {
     res.status(500).json({ error: "Failed to delete gig." });
   }
 };
+
+// PUT /api/gigs/:id  — owner only
+export const updateGig = async (req, res) => {
+  const { id } = req.params;
+  const { title, description, price, category, image, packages } = req.body;
+
+  try {
+    const gig = await prisma.gig.findUnique({ where: { id: Number(id) } });
+    if (!gig) return res.status(404).json({ error: "Gig not found." });
+    if (gig.userId !== req.user.userId) {
+      return res.status(403).json({ error: "Not authorised to edit this gig." });
+    }
+
+    const updated = await prisma.gig.update({
+      where: { id: Number(id) },
+      data: {
+        ...(title && { title }),
+        ...(description && { description }),
+        ...(price && { price: parseInt(price, 10) }),
+        ...(category && { category }),
+        ...(image !== undefined && { image }),
+        ...(packages !== undefined && { packages }),
+      },
+    });
+
+    res.json(updated);
+  } catch (err) {
+    console.error("PUT /gigs/:id error:", err);
+    res.status(500).json({ error: "Failed to update gig." });
+  }
+};
