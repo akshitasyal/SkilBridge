@@ -34,7 +34,7 @@ export const createPaymentOrder = async (req, res) => {
 
     const rzpOptions = {
       amount: amountInPaisa,
-      currency: "USD", // Adjust to INR if regional gateway evaluates exclusively INR
+      currency: "INR", // Changed to INR for Razorpay India
       receipt: `receipt_order_${order.id}`
     };
 
@@ -43,12 +43,23 @@ export const createPaymentOrder = async (req, res) => {
     res.json({
       razorpayOrderId: rzpOrder.id,
       amount: rzpOrder.amount,
-      key: process.env.RAZORPAY_KEY_ID || "rzp_test_dummy"
+      key: process.env.RAZORPAY_KEY_ID || "rzp_test_SfTsspodEYJUAa"
     });
 
   } catch (error) {
     console.error("Razorpay Generation Error:", error);
-    res.status(500).json({ error: error.message || "Failed to dispatch active checkout bounds." });
+    
+    // Safely extract Razorpay error description if available
+    let errorMsg = "Failed to dispatch active checkout bounds.";
+    if (error && error.error && error.error.description) {
+      errorMsg = error.error.description;
+    } else if (error && error.message) {
+      errorMsg = error.message;
+    } else if (typeof error === 'string') {
+      errorMsg = error;
+    }
+
+    res.status(500).json({ error: errorMsg });
   }
 };
 

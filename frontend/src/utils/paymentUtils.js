@@ -9,7 +9,7 @@ export const handlePayment = async (orderId, token, onSuccess) => {
     const options = {
       key: rzpData.key,
       amount: rzpData.amount,
-      currency: "USD",
+      currency: "INR",
       name: "SkillBridge Marketplace",
       description: `Fulfillment for Order #${orderId}`,
       order_id: rzpData.razorpayOrderId,
