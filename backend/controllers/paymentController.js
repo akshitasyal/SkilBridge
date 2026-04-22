@@ -48,7 +48,7 @@ export const createPaymentOrder = async (req, res) => {
 
   } catch (error) {
     console.error("Razorpay Generation Error:", error);
-    res.status(500).json({ error: "Failed to dispatch active checkout bounds." });
+    res.status(500).json({ error: error.message || "Failed to dispatch active checkout bounds." });
   }
 };
 
