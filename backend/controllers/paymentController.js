@@ -2,10 +2,14 @@ import Razorpay from "razorpay";
 import crypto from "crypto";
 import prisma from "../config/db.js";
 
+// Strip potential accidental quotes from dashboard copy-pastes
+const RZP_ID = (process.env.RAZORPAY_KEY_ID || "rzp_test_SfTsspodEYJUAa").replace(/["']/g, "").trim();
+const RZP_SECRET = (process.env.RAZORPAY_KEY_SECRET || "6HfAQTBKCEy2dHSS1qbzzKir").replace(/["']/g, "").trim();
+
 // Initialize Razorpay securely evaluating local keys
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_dummy",
-  key_secret: process.env.RAZORPAY_KEY_SECRET || "dummysecret12345"
+  key_id: RZP_ID,
+  key_secret: RZP_SECRET
 });
 
 // POST /api/payment/create-order
@@ -43,7 +47,7 @@ export const createPaymentOrder = async (req, res) => {
     res.json({
       razorpayOrderId: rzpOrder.id,
       amount: rzpOrder.amount,
-      key: process.env.RAZORPAY_KEY_ID || "rzp_test_SfTsspodEYJUAa"
+      key: RZP_ID
     });
 
   } catch (error) {
@@ -72,7 +76,7 @@ export const verifyPayment = async (req, res) => {
       return res.status(400).json({ error: "Missing webhook validation headers." });
     }
 
-    const secret = process.env.RAZORPAY_KEY_SECRET || "dummysecret12345";
+    const secret = RZP_SECRET;
 
     // 1. Forge native Cryptographic expected evaluation binding the strings
     const generatedSignature = crypto
